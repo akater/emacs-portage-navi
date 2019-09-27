@@ -33,10 +33,23 @@
 
 ;;; Customize variables
 
-(defvar pona:portage-dir "/usr/portage" "pona:portage-dir.")
+(defgroup portage-navi nil
+  "Explore packages of portage, Gentoo package manager."
+  :group 'external)
 
-(defvar pona:package-equery-use-native-highlighting t
-  "When non-nil, use equery's native highlighting.")
+(defcustom pona:portage-dir "/usr/portage/"
+  "Portage directory."
+  :type 'directory
+  :group 'portage-navi)
+
+(defcustom pona:package-equery-use-native-highlighting t
+  "When non-nil, use equery's native highlighting."
+  :type 'boolean
+  :group 'portage-navi)
+
+(defgroup portage-navi-faces nil
+  "Portage-navi highlighting"
+  :group 'portage-navi)
 
 (defface pona:face-title
   '((((class color) (background light))
@@ -45,7 +58,7 @@
      :foreground "yellow" :weight bold :height 1.5 :inherit variable-pitch)
     (t :height 1.5 :weight bold :inherit variable-pitch))
   "Face for pona titles at level 1."
-  :group 'pona)
+  :group 'portage-navi-faces)
 
 (defface pona:face-subtitle
   '((((class color) (background light))
@@ -54,19 +67,19 @@
      (:foreground "Gray90" :height 1.2 :inherit variable-pitch))
     (t :height 1.2 :inherit variable-pitch))
   "Face for pona titles at level 2."
-  :group 'pona)
+  :group 'portage-navi-faces)
 
 (defface pona:face-item
   '((t :inherit variable-pitch :foreground "DarkSlateBlue"))
   "Face for pona items."
-  :group 'pona)
+  :group 'portage-navi-faces)
 
 (defface pona:face-toolbar-button
   '((((class color) (background light))
      :foreground "Lightskyblue4" :background "White")
     (((class color) (background dark))
      :foreground "Gray10" :weight bold))
-  "Face for button on toolbar" :group 'pona)
+  "Face for button on toolbar" :group 'portage-navi-faces)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
