@@ -226,12 +226,12 @@ If not found, return nil."
 
 (defun pona:package-equery-use-d (package)
   "Return a deferred text for details of use flags of PACKAGE."
-  (deferred:process "equery"
-    (unless pona:package-equery-use-native-highlighting "-C")
-    "uses"
-    (format "%s/%s"
-            (pona:package-category-name package)
-            (pona:package-name package))))
+  (apply #'deferred:process "equery"
+         `(,@(unless pona:package-equery-use-native-highlighting
+               '("-C")) "uses"
+               ,(format "%s/%s"
+                        (pona:package-category-name package)
+                        (pona:package-name package)))))
 
 ;; ## eix model
 ;; ( ; ## category alist
