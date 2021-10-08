@@ -216,7 +216,7 @@ If not found, return nil."
           (kill-buffer buf)
           (if ret (cdr (car (cdr (car ret))))))))
     :catch
-    (lambda (err) nil)))
+    (lambda (_err) nil)))
 
 ;; (deferred:pp (pona:package-info-d "dev-lang/ocaml"))
 
@@ -286,7 +286,7 @@ rdepend: \"dev-lang/perl virtual/perl-Term-ANSIColor\" "
 
 (defun pona:trs-category-dom-to-alist (categories-dom)
   "[internal] "
-  (cl-loop with ret = nil
+  (cl-loop with _ret = nil
            for c in categories-dom
            for cn = (xml-get-attribute c 'name)
            collect
@@ -302,10 +302,10 @@ rdepend: \"dev-lang/perl virtual/perl-Term-ANSIColor\" "
     (cl-loop for v in vers-dom
              for id = (xml-get-attribute v 'id)
              for installed-ver = (xml-get-attribute-or-nil v 'installed)
-             for mask = (pona:xml-get-attr v 'mask 'type)
-             for iuse = (pona:xml-get-text v 'iuse)
-             for dep  = (pona:xml-get-text v 'depend)
-             for rdep = (pona:xml-get-text v 'rdepend)
+             for mask = (pona::xml-get-attr v 'mask 'type)
+             for iuse = (pona::xml-get-text v 'iuse)
+             for dep  = (pona::xml-get-text v 'depend)
+             for rdep = (pona::xml-get-text v 'rdepend)
              do
              (when installed-ver (setq installed id))
              (when (or (null latest) (and (string< latest-ver id) (not (string-match "9999" id))))
@@ -319,9 +319,9 @@ rdepend: \"dev-lang/perl virtual/perl-Term-ANSIColor\" "
           (make-pona:package
            :name name
            :category-name category-name
-           :description (pona:xml-get-text package-dom 'description)
-           :licenses (pona:xml-get-text package-dom 'licenses)
-           :homepage (pona:xml-get-text package-dom 'homepage)
+           :description (pona::xml-get-text package-dom 'description)
+           :licenses (pona::xml-get-text package-dom 'licenses)
+           :homepage (pona::xml-get-text package-dom 'homepage)
            :installed-version installed
            :latest-version latest-ver
            :versions (nreverse vers-alist)))))
@@ -332,14 +332,14 @@ If not found, return nil."
   (pona:aand (xml-get-children parent node-sym)
              (car it)))
 
-(defun pona:xml-get-text (parent node-sym)
-  "[internal] Return the text content of the first child node [NODE-SYM] at the PARENT node.
+(defun pona::xml-get-text (parent node-sym)
+  "Return the text content of the first child node NODE-SYM at the PARENT node.
 If not found, return nil."
   (pona:aand (pona:xml-get-elm parent node-sym)
              (car (xml-node-children it))))
 
-(defun pona:xml-get-attr (parent node-sym attr-sym)
-  "[internal] Return the attribute [ATTR-SYM] text of the first child node [NODE-SYM] at the PARENT node.
+(defun pona::xml-get-attr (parent node-sym attr-sym)
+  "Return the attribute ATTR-SYM text of the first child node NODE-SYM at the PARENT node.
 If not found, return nil."
   (pona:aand (pona:xml-get-elm parent node-sym)
              (xml-get-attribute it attr-sym)))
@@ -395,7 +395,7 @@ If not found, return nil."
 (defvar pona:home-buffer-mode-hook nil
   "pona:home-buffer-mode-hook.")
 
-(defun pona:home-buffer-mode (&optional arg)
+(defun pona:home-buffer-mode (&optional _arg)
   "Set up major mode `pona:home-buffer-mode'.
 
 \\{pona:home-buffer-mode-map}"
@@ -463,7 +463,7 @@ If not found, return nil."
            (make-ctbl:cmodel :title "Latest" :align 'left)
            (make-ctbl:cmodel :title "Description" :align 'left)))
          (data
-          (cl-loop for (pname . i) in packages
+          (cl-loop for (_pname . i) in packages
                    for no from 1
                    collect (cons no (pona:make-package-table--line i))))
          (model
@@ -472,7 +472,7 @@ If not found, return nil."
          component)
     (setf (ctbl:param-fixed-header param) t)
     (setf (ctbl:param-bg-colors param)
-          (lambda (model row-id col-id str)
+          (lambda (model row-id col-id _str)
             (when (= 2 col-id)
               (let* ((rows (ctbl:model-data model))
                      (row (nth row-id rows))
@@ -529,7 +529,7 @@ If not found, return nil."
           (cl-loop with ret = nil
                    with no = 0
                    for (cn . ps) in categories do
-                   (cl-loop for (pn . p) in ps do
+                   (cl-loop for (_pn . p) in ps do
                             (push (cons
                                    (cl-incf no)
                                    (cons cn (pona:make-package-table--line p)))
@@ -541,8 +541,8 @@ If not found, return nil."
          component)
     (setf (ctbl:param-fixed-header param) t)
     (setf (ctbl:param-bg-colors param)
-          (let ((cp component))
-            (lambda (model row-id col-id str)
+          (let ((_cp component))
+            (lambda (_model row-id col-id _str)
               (when (= 3 col-id)
                 (let* ((rows (ctbl:component-sorted-data component))
                        (row (nth row-id rows))
@@ -610,7 +610,7 @@ If not found, return nil."
 (defvar pona:package-detail-mode-hook nil
   "pona:package-detail-mode-hook.")
 
-(defun pona:package-detail-mode (&optional arg)
+(defun pona:package-detail-mode (&optional _arg)
   "Set up major mode `pona:package-detail-mode'.
 
 \\{pona:package-detail-mode-map}"
@@ -655,6 +655,8 @@ PACKAGE"
     (pop-to-buffer buf)))
 
 (defvar pona:package-detail-versions-quicklook-buffer " *pona:package-detail-versions-quicklook*" "[internal] ")
+
+(declare-function edbi:dbview-query-result-quicklook-mode "edbi")
 
 (defun pona:package-detail-versions-quicklook-command ()
   "Display the cell content on the popup buffer."
@@ -709,7 +711,7 @@ PACKAGE"
           (make-ctbl:model
            :column-model column-models :data data)))
     (setf (ctbl:param-bg-colors param)
-          (lambda (model row-id col-id str)
+          (lambda (model row-id col-id _str)
             (when (= 0 col-id)
               (let* ((rows (ctbl:model-data model))
                      (row  (nth row-id rows))
