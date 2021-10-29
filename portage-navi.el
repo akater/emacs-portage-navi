@@ -624,6 +624,8 @@ If not found, return nil."
 
 (defvar pona:package-detail-buffer-name " *pona:package-detail-buffer")
 
+(defvar-local pona:package-object nil)
+
 (defun pona:open-package-detail-buffer (package)
   "open-package-detail-buffer
 PACKAGE"
@@ -632,6 +634,7 @@ PACKAGE"
       (let ((buffer-read-only))
         (erase-buffer)
         (pona:package-detail-mode)
+        (setq-local pona:package-object package)
         (insert
          (pona:rt-format
           "%s\nLatest: %s  Installed: %s\n"
